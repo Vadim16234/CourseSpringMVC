@@ -43,3 +43,4 @@ build/
 .war
 .jar
 .ear
+database.properties
