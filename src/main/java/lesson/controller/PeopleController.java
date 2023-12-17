@@ -2,6 +2,7 @@ package lesson.controller;
 
 import lesson.dao.PersonDAO;
 import lesson.models.Person;
+import lesson.util.PersonValidator;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -14,9 +15,11 @@ import javax.validation.Valid;
 public class PeopleController {
 
     private final PersonDAO personDAO;
+    private final PersonValidator personValidator;
 
-    public PeopleController(PersonDAO personDAO) {
+    public PeopleController(PersonDAO personDAO, PersonValidator personValidator) {
         this.personDAO = personDAO;
+        this.personValidator = personValidator;
     }
 
     @GetMapping
@@ -39,6 +42,8 @@ public class PeopleController {
 
     @PostMapping
     public String create(@ModelAttribute("person") @Valid Person person, BindingResult bindingResult) {
+        personValidator.validate(person, bindingResult); // валидация email
+
         if (bindingResult.hasErrors()) { // если ошибка есть, возвращаемся к новой форме создания
             return "people/new";
         }
@@ -55,6 +60,8 @@ public class PeopleController {
     @PatchMapping("/{id}")
     public String update(@ModelAttribute("person") @Valid Person person,
                          BindingResult bindingResult, @PathVariable("id") int id) {
+        personValidator.validate(person, bindingResult); // валидация email
+
         if (bindingResult.hasErrors()) {
             return "people/edit";
         }
